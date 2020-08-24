@@ -1,2 +1,2 @@
 # rizon
-Everything that is development for this small business.
+Everything that is developed for this small business.
