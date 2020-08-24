@@ -1,0 +1,218 @@
+<?php
+   defined('BASEPATH') OR exit('No direct script access allowed');
+   class Pdf extends CI_Controller {      
+   	public function __construct()
+   	{
+   	    parent::__construct(); 
+   	} 	
+   	public function index()
+   	{
+   	    $this->load->view('pdf');  
+   	}	
+   	public function sub()
+   	{
+   	    $data = $_POST;  	    
+   	    require_once(APPPATH.'class/mpdf/mpdf.php'); 	    
+   	    $code = file_get_contents('https://benvee.cn/sys2/barcode.php?f=svg&s=code-128&sf=1.5&sx=3&d='.$data['sku'].'&p=0&bc=none');   
+   	    $code = str_replace('<?xml version="1.0"?>','',$code);	    
+$icon = '
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+   width="60px" height="108px" viewBox="0 0 15.592 27.438" enable-background="new 0 0 15.592 27.438" xml:space="preserve">
+   <path d="M0.268,4.295V0h1.904c0.383,0,0.674,0.039,0.873,0.115c0.199,0.078,0.358,0.214,0.478,0.409s0.179,0.411,0.179,0.647
+      c0,0.305-0.099,0.562-0.296,0.771S2.904,2.284,2.492,2.341c0.15,0.072,0.265,0.144,0.343,0.214C3,2.707,3.158,2.897,3.306,3.126
+      l0.747,1.169H3.338L2.77,3.401C2.604,3.144,2.467,2.946,2.36,2.81S2.156,2.577,2.072,2.522C1.986,2.468,1.9,2.43,1.812,2.408
+      c-0.064-0.014-0.17-0.021-0.316-0.021H0.836v1.907H0.268z M0.836,1.896h1.222c0.26,0,0.463-0.026,0.609-0.081
+      c0.146-0.053,0.258-0.139,0.334-0.258c0.076-0.117,0.114-0.246,0.114-0.385c0-0.203-0.074-0.37-0.222-0.501s-0.38-0.196-0.698-0.196
+      H0.836V1.896z M4.329,2.739c0-0.576,0.16-1.003,0.48-1.28c0.268-0.23,0.594-0.346,0.979-0.346c0.428,0,0.777,0.141,1.049,0.42
+      c0.271,0.281,0.407,0.668,0.407,1.162c0,0.4-0.06,0.716-0.181,0.945C6.944,3.87,6.768,4.048,6.54,4.175
+      c-0.23,0.127-0.48,0.19-0.752,0.19c-0.436,0-0.788-0.14-1.057-0.419S4.329,3.265,4.329,2.739z M4.871,2.739
+      c0,0.398,0.087,0.697,0.261,0.896s0.393,0.297,0.656,0.297c0.262,0,0.479-0.1,0.653-0.299S6.702,3.13,6.702,2.722
+      c0-0.385-0.088-0.676-0.262-0.874C6.264,1.649,6.047,1.55,5.788,1.55c-0.264,0-0.482,0.099-0.656,0.296S4.871,2.341,4.871,2.739z
+      M7.947,4.295V0h0.568v1.764h2.232V0h0.568v4.295h-0.568V2.271H8.515v2.024H7.947z M12.069,2.915l0.535-0.047
+      c0.025,0.215,0.084,0.392,0.178,0.528c0.092,0.139,0.236,0.25,0.432,0.334c0.195,0.086,0.416,0.128,0.66,0.128
+      c0.217,0,0.408-0.032,0.574-0.097s0.289-0.152,0.371-0.266c0.08-0.111,0.121-0.234,0.121-0.367c0-0.135-0.039-0.252-0.117-0.354
+      c-0.078-0.1-0.207-0.185-0.387-0.253c-0.115-0.045-0.371-0.114-0.766-0.21c-0.395-0.094-0.67-0.184-0.828-0.268
+      c-0.205-0.107-0.359-0.24-0.459-0.4c-0.102-0.158-0.15-0.337-0.15-0.534c0-0.217,0.061-0.419,0.184-0.608
+      c0.123-0.188,0.303-0.331,0.539-0.429s0.5-0.146,0.789-0.146c0.318,0,0.6,0.052,0.842,0.153c0.244,0.104,0.43,0.254,0.561,0.453
+      s0.201,0.425,0.211,0.677l-0.545,0.041c-0.029-0.271-0.129-0.477-0.297-0.615c-0.17-0.139-0.418-0.208-0.748-0.208
+      c-0.344,0-0.596,0.062-0.752,0.189c-0.158,0.125-0.236,0.277-0.236,0.455c0,0.154,0.057,0.281,0.168,0.381
+      c0.109,0.1,0.395,0.202,0.857,0.307c0.461,0.104,0.777,0.195,0.949,0.273c0.25,0.115,0.436,0.262,0.555,0.438
+      c0.119,0.178,0.178,0.381,0.178,0.611c0,0.229-0.064,0.443-0.195,0.646c-0.131,0.201-0.32,0.359-0.564,0.471
+      c-0.246,0.112-0.521,0.169-0.828,0.169c-0.389,0-0.715-0.057-0.977-0.17c-0.264-0.113-0.469-0.283-0.617-0.511
+      C12.155,3.46,12.077,3.202,12.069,2.915z M2.883,23.09l0.398,0.213l-0.131-1.17l-0.133-1.172L1.969,21.5l-1.047,0.537l0.461,0.248
+      c0,0-0.617,1.068-0.912,1.594c-1.076,1.938-0.254,3.66,1.936,3.652H4.15h4.232V25.79H2.641c-0.758,0.002-1.059-0.529-0.67-1.18
+      L2.883,23.09L2.883,23.09z M9.326,17.446l-0.385,0.238l1.08,0.471l1.08,0.471l0.059-1.176l0.057-1.178l-0.445,0.277
+      c0,0-0.615-1.07-0.924-1.588c-1.139-1.901-3.043-2.049-4.131-0.15l-0.871,1.512l-2.117,3.666l1.51,0.871l2.871-4.973
+      c0.377-0.658,0.986-0.652,1.355,0.01l0.859,1.549H9.326z M11.072,25.745l-0.016-0.451l-0.947,0.699l-0.947,0.699l0.99,0.639
+      l0.988,0.639l-0.016-0.523c0,0,1.234,0.002,1.836-0.008c2.215-0.035,3.297-1.609,2.195-3.502l-0.871-1.51l-2.117-3.666l-1.51,0.871
+      l2.871,4.973c0.381,0.656,0.072,1.182-0.686,1.17L11.072,25.745L11.072,25.745z M7.336,23.366l-1.928-1.312l-0.432,0.695l0,0
+      l2.33,2.459l3.309-4.492l-0.326-0.58L7.336,23.366z"/>
+   <g></g>
+   <g></g>
+   <g></g>
+   <g></g>
+   <g></g>
+   <g></g>
+</svg>
+';
+$html="
+<style>@page{sheet-size: 800px 616px; } @page pagetwo{sheet-size: 780px 600px; } @page pagethree{sheet-size: 760px 760px; }</style>
+";
+$html1 = $html.'
+<style>.brand{width:800px;height:616px;} .brand_info{width:800px;height:305px;} .brand_content{width:266px;} .sku{width:264px;margin-top:80px;padding-left:60px;font-size:48px;font-weight:bold;}.name{margin-top:10px;margin-left:60px;font-size:28px;font-weight:bold;}.des{margin-top:10px;margin-left:60px;font-size:28px;font-weight:bold;}.made{margin-top:10px;margin-left:60px;font-size:28px;font-weight:bold;}.title{margin-top:70px;font-size:38px;font-weight:bold;}.code{margin-top:10px;}.icon{margin-top:50px;}</style>
+<table class="brand">
+   <tr>
+      <td colspan="3" class="brand_info"></td>
+   </tr>
+   <tr>
+      <td class="brand_content">
+         <div class="sku">'.$data['sku'].'</div>
+         <div class="name">'.$data['name'].'</div>
+         <div class="des">'.$data['des'].'</div>
+         <div class="made">Made in China</div>
+      </td>
+      <td class="brand_content">
+         <div class="title">1</div>
+         <div class="code">'.$code.'</div>
+      </td>
+      <td class="brand_content">
+         <div class="icon">'.$icon.'</div>
+      </td>
+   </tr>
+</table>
+';
+$html2 = $html.'
+<pagebreak page-selector="pagetwo"/>
+<style>.hgz{width:780px;height:600px;font-size:20px; } .hgz td{width:260px;}.hgzname{font-size:40px;font-weight:bold;}.hgztext{font-size:40px; border:5px solid #000;}.line{border-bottom:2px solid #000;}</style>
+<table class="hgz">
+   <tr>
+      <td class="hgzname" colspan="2">'.$data['name'].'&nbsp;使用说明</td>
+      <td>
+         <div class="hgztext">合格证</div>
+      </td>
+   </tr>
+   <tr>
+      <td class="line"  colspan="3"></td>
+   </tr>
+   <tr>
+      <td>规&nbsp;格:'.$data['specs'].'</td>
+      <td>质检证明:'.$data['quality'].'</td>
+      <td></td>
+   </tr>
+   <tr>
+      <td>材&nbsp;料:'.$data['material'].'</td>
+      <td>执行标准:'.$data['standard'].'</td>
+      <td></td>
+   </tr>
+   <tr>
+      <td colspan="3">使用方法：</td>
+   </tr>
+   <tr>
+      <td colspan="3">方法一：清理好张贴表面，勿是使有粉尘、油污等异物，然后撕下背面底
+         纸，对齐位置黏贴即可。
+      </td>
+   </tr>
+   <tr>
+      <td colspan="3">方法二：无</td>
+   </tr>
+   <tr>
+      <td colspan="3">注意事项：</td>
+   </tr>
+   <tr>
+      <td colspan="3">● 由于生产批次不同，材料可能会有细微色差，不影响产品使用。</td>
+   </tr>
+   <tr>
+      <td colspan="3">● 请勿使用有机化学试剂清洁，可能造成脱色或字迹不清。</td>
+   </tr>
+   <tr>
+      <td colspan="2">
+         <table>
+            <tr>
+               <td>上海丽昂实业有限公司</td>
+            </tr>
+            <tr>
+               <td>上海市青浦区浦仓路485号316-Y</td>
+            </tr>
+            <tr>
+               <td>售后服务热线：</td>
+            </tr>
+            <tr>
+               <td>+86 (0)21 5269 4498 (工作日9:00-20:00)</td>
+            </tr>
+         </table>
+      </td>
+      <td>
+         <table>
+            <tr>
+               <td>'.$code.'</td>
+            </tr>
+            <tr>
+               <td>'.$data['sku'].'</td>
+            </tr>
+         </table>
+      </td>
+   </tr>
+</table>
+';
+if(!empty($data['zkh_sku']))
+{
+$zkh = '
+<tr>
+   <td class="title">ZKH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SKU:</td>
+   <td>'.nl2br($data['zkh_sku']).'</td>
+</tr>
+';
+}
+$html3 = $html.'
+<style>.shd{width:760px;height:760px; font-size:42px;font-weight:bold;}.title{font-size:34px;width:300px;}</style>
+<pagebreak page-selector="pagethree"/>
+<table class="shd">
+   <tr>
+      <td colspan="2">上海丽昂实业有限公司装箱单</td>
+   </tr>
+   <tr>
+      <td class="title">Vendor&nbsp;&nbsp;&nbsp;NO:</td>
+      <td>'.$data['vendoe'].'</td>
+   </tr>
+   <tr>
+      <td class="title">PO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NO:</td>
+      <td>'.$data['po'].'</td>
+   </tr>
+   <tr>
+      <td class="title">箱&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号:</td>
+      <td>'.$data['box'].'</td>
+   </tr>
+   <tr>
+      <td class="title">产&nbsp;品&nbsp;名&nbsp;称:</td>
+      <td>'.$data['name'].'</td>
+   </tr>
+   <tr>
+      <td class="title">简&nbsp;要&nbsp;说&nbsp;明:</td>
+      <td>'.$data['brief'].'</td>
+   </tr>
+   <tr>
+      <td class="title">数&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;量:</td>
+      <td>'.$data['num'].'</td>
+   </tr>
+   <tr>
+      <td class="title">出&nbsp;货&nbsp;日&nbsp;期:</td>
+      <td>'.$data['date'].'</td>
+   </tr>
+   <tr>
+      <td class="title">丽&nbsp;昂&nbsp;货&nbsp;号:</td>
+      <td>'.$data['sku'].'</td>
+   </tr>
+   '.$zkh.'
+   <tr>
+      <td ></td>
+      <td  class="title">内附送货单</td>
+   </tr>
+</table>
+';
+$mpdf = new Mpdf('zh-cn'); 
+$mpdf->WriteHTML($html1); 
+$mpdf->WriteHTML($html2);
+$mpdf->WriteHTML($html3);  
+$mpdf->Output();
+}
+}
